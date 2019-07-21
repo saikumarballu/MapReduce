@@ -1,0 +1,31 @@
+set hive.exec.dynamic.partition=true;
+set hive.exec.dynamic.partition.mode=nonstrict;
+set hive.exec.max.dynamic.partitions.pernode=1000;
+
+DROP TABLE  IF EXISTS wikisample;
+
+CREATE TABLE wikisample (
+
+project_name STRING COMMENT 'Represents page name of the record',
+page_name STRING COMMENT 'Represents project name of the record',
+page_count INT COMMENT 'Number of times the page has been visited',
+page_size INT COMMENT 'size of the page');
+
+LOAD DATA LOCAL INPATH '/home/training/training_material/data/wikisample' INTO TABLE wikisample;
+
+DROP TABLE IF EXISTS wiki;
+
+CREATE TABLE wiki(
+
+page_name STRING COMMENT 'Represents project name of the record',
+page_count INT COMMENT 'Number of times the page has been visited'
+
+)
+PARTITIONED BY (projectname STRING);
+
+
+INSERT INTO TABLE wiki 
+PARTITION (projectname)
+SELECT w.page_name,w.page_count,w.project_named
+FROM wikisample w;
+

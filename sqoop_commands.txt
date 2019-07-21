@@ -1,0 +1,46 @@
+sqoop import --connect jdbc:mysql://localhost/movielens --table movie --username training --password training
+
+sqoop import --connect jdbc:mysql://localhost/movielens --table movie --username training --password training --delete-target-dir
+
+sqoop import --connect jdbc:mysql://localhost/movielens --table movie --username training --password training --split-by year --target-dir /tmp -m 6
+
+sqoop import --connect jdbc:mysql://localhost/movielens --table movie --username training --password training --fields-terminated-by '\t' --hive-import
+
+
+MYSQL database.
+
+shell>mysql -u root test
+
+
+mysql>CREATE TABLE employees_export (
+  emp_no int(11) NOT NULL,
+  birth_date date NOT NULL,
+  first_name varchar(14) NOT NULL,
+  last_name varchar(16) NOT NULL,
+  gender enum('M','F') NOT NULL,
+  hire_date date NOT NULL,
+  PRIMARY KEY (emp_no)
+);
+
+
+mysql>CREATE TABLE employees_exp_stg (
+  emp_no int(11) NOT NULL,
+  birth_date date NOT NULL,
+  first_name varchar(14) NOT NULL,
+  last_name varchar(16) NOT NULL,
+  gender enum('M','F') NOT NULL,
+  hire_date date NOT NULL,
+  PRIMARY KEY (emp_no)
+);
+
+mysql>exit;
+
+cd /home/bigdata/training_materials/developer/data
+
+sqoop export \
+--connect jdbc:mysql://localhost/test \
+--table employees_export  \
+--staging-table employees_exp_stg \
+--clear-staging-table \
+-m 4 \
+--export-dir /user/training/employees-hive
